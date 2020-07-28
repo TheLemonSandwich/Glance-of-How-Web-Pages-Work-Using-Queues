@@ -1,0 +1,130 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct node
+{
+	int num;
+	node* next;
+};
+
+class Pages
+{
+public:
+	Pages()
+	{
+		MRU = LRU = NULL;
+		temp = new node;
+	}
+	void Insert(int);
+	node* MRU;	// Most Recently Used ( Basically, the root node )
+	node* LRU;	// Least Recently Used ( Basically, the tail node )
+	void Display();
+private:
+	void InsertNum(node*, int);
+	node* temp;
+	void Display(node*);
+	int num;
+};
+
+void Pages::Insert(int n)
+{
+	node* t = new node;
+	InsertNum(t,n);
+}
+
+void Pages::InsertNum(node* n, int num)
+{
+	if (MRU == NULL)
+	{
+		n->num = num;
+		n->next = NULL;
+		MRU = LRU = n;
+	}
+	else if (num == MRU->num);
+	else if (num == LRU->num)
+	{
+		temp->num = MRU->num;
+		if (MRU->next == LRU)
+		{
+			MRU->num = num;
+			LRU->num = temp->num;
+		}
+		else if(MRU->next != NULL)
+		{
+			this->num = MRU->next->num;
+			MRU->num = num;
+			MRU->next->num = temp->num;
+			LRU->num = this->num;
+		}
+		else if (MRU == LRU)
+		{
+			n->num = num;
+			n->next = MRU;
+			MRU = n;
+		}
+	}
+	else if (MRU->next != NULL && MRU->next->num == num)
+	{
+		temp->num = MRU->num;
+		MRU->num = num;
+		MRU->next->num = temp->num;
+	}
+	else if (MRU->next == NULL)
+	{
+		n->num = num;
+		n->next = MRU;
+		MRU = n;
+	}
+	else
+	{
+		if (MRU->next != LRU)
+		{
+			temp->num = MRU->num;
+			MRU->num = num;
+			this->num = MRU->next->num;
+			MRU->next->num = temp->num;
+			LRU->num = this->num;
+		}
+		else
+		{
+			n->num = num;
+			n->next = MRU;
+			MRU = n;
+		}
+	}
+}
+
+void Pages::Display()
+{
+	Display(MRU);
+}
+
+void Pages::Display(node* n)
+{
+	cout << "Most Recently Used: " << MRU->num << endl;
+	cout << "Least Recently Used: " << LRU->num << endl;
+	cout << "Memory Buffer Contain Pages: " << MRU->num << " ";
+	if (MRU != LRU)
+	{
+		if (MRU->next != LRU && MRU->next != NULL)
+			cout << MRU->next->num << " " << LRU->num << endl;
+		else cout << LRU->num << endl;
+	}
+	cout << endl;
+}
+int main()
+{
+	int num;
+	Pages p;
+	do
+	{
+		cout << "Enter Page no from (1 to 9) : ";
+		cin >> num;
+		if (num < 1 || num > 9)
+			break;
+		p.Insert(num);
+		p.Display();
+	} while (true);
+}
